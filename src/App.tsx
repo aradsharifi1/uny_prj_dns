@@ -1,8 +1,10 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Server, Globe, Shield, Zap, Phone, Mail, MapPin, Check, Star } from 'lucide-react';
 
 function App() {
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   useEffect(() => {
     // Add hover message functionality
     const serviceCards = document.querySelectorAll('.service-card');
@@ -42,6 +44,20 @@ function App() {
       cleanupFunctions.forEach(cleanup => cleanup());
     };
   }, []);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowSuccessMessage(true);
+    
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 5000);
+    
+    // Reset form
+    const form = e.target as HTMLFormElement;
+    form.reset();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -290,31 +306,41 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
               <div className="bg-gray-800 p-8 rounded-xl">
+                {showSuccessMessage && (
+                  <div className="mb-6 p-4 bg-green-600 text-white rounded-lg flex items-center">
+                    <Check className="h-5 w-5 ml-3" />
+                    <span>پیام شما با موفقیت ارسال شد! به زودی با شما تماس خواهیم گرفت.</span>
+                  </div>
+                )}
                 <h3 className="text-2xl font-bold mb-6">پیام خود را ارسال کنید</h3>
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleFormSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <input
                       type="text"
                       placeholder="نام و نام خانوادگی"
+                      required
                       className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                     />
                     <input
                       type="email"
                       placeholder="آدرس ایمیل"
+                      required
                       className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                     />
                   </div>
                   <input
                     type="text"
                     placeholder="موضوع پیام"
+                    required
                     className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
                   />
                   <textarea
                     rows={6}
                     placeholder="متن پیام شما..."
+                    required
                     className="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 resize-none"
                   ></textarea>
-                  <button className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors w-full md:w-auto">
+                  <button type="submit" className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors w-full md:w-auto">
                     ارسال پیام
                   </button>
                 </form>
