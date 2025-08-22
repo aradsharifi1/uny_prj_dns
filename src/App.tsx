@@ -1,7 +1,45 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { Server, Globe, Shield, Zap, Phone, Mail, MapPin, Check, Star } from 'lucide-react';
 
 function App() {
+  useEffect(() => {
+    // Add hover message functionality
+    const serviceCards = document.querySelectorAll('.service-card');
+    
+    serviceCards.forEach(card => {
+      let tooltip: HTMLDivElement | null = null;
+      
+      const showTooltip = (e: MouseEvent) => {
+        tooltip = document.createElement('div');
+        tooltip.textContent = 'این بخش قابل تغییر است';
+        tooltip.className = 'absolute bg-gray-800 text-white px-3 py-2 rounded-lg text-sm z-50 pointer-events-none';
+        tooltip.style.top = '10px';
+        tooltip.style.right = '10px';
+        card.appendChild(tooltip);
+      };
+      
+      const hideTooltip = () => {
+        if (tooltip) {
+          tooltip.remove();
+          tooltip = null;
+        }
+      };
+      
+      card.addEventListener('mouseenter', showTooltip);
+      card.addEventListener('mouseleave', hideTooltip);
+    });
+    
+    // Cleanup function
+    return () => {
+      const serviceCards = document.querySelectorAll('.service-card');
+      serviceCards.forEach(card => {
+        card.removeEventListener('mouseenter', showTooltip);
+        card.removeEventListener('mouseleave', hideTooltip);
+      });
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       {/* Header */}
@@ -97,7 +135,7 @@ function App() {
                 description: "شبکه توزیع محتوا برای بارگذاری سریع‌تر"
               }
             ].map((service, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow group">
+              <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow group service-card relative">
                 <div className="text-blue-600 mb-4 group-hover:scale-110 transition-transform">
                   {service.icon}
                 </div>
