@@ -6,6 +6,7 @@ function App() {
   useEffect(() => {
     // Add hover message functionality
     const serviceCards = document.querySelectorAll('.service-card');
+    const cleanupFunctions: (() => void)[] = [];
     
     serviceCards.forEach(card => {
       let tooltip: HTMLDivElement | null = null;
@@ -28,15 +29,17 @@ function App() {
       
       card.addEventListener('mouseenter', showTooltip);
       card.addEventListener('mouseleave', hideTooltip);
+      
+      // Store cleanup function for this specific card
+      cleanupFunctions.push(() => {
+        card.removeEventListener('mouseenter', showTooltip);
+        card.removeEventListener('mouseleave', hideTooltip);
+      });
     });
     
     // Cleanup function
     return () => {
-      const serviceCards = document.querySelectorAll('.service-card');
-      serviceCards.forEach(card => {
-        card.removeEventListener('mouseenter', showTooltip);
-        card.removeEventListener('mouseleave', hideTooltip);
-      });
+      cleanupFunctions.forEach(cleanup => cleanup());
     };
   }, []);
 
